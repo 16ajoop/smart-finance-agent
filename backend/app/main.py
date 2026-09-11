@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -23,16 +25,34 @@ app = FastAPI(
 )
 
 
+# ---------------------------------------------------------
+# CORS CONFIGURATION
+# ---------------------------------------------------------
+
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173"
+)
+
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in ALLOWED_ORIGINS.split(",")
+    if origin.strip()
+]
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173"
-    ],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+
+# ---------------------------------------------------------
+# API ROUTES
+# ---------------------------------------------------------
 
 app.include_router(expense_router)
 app.include_router(financial_profile_router)
@@ -41,6 +61,10 @@ app.include_router(dashboard_router)
 app.include_router(agent_router)
 
 
+# ---------------------------------------------------------
+# ROOT
+# ---------------------------------------------------------
+
 @app.get("/")
 def root():
     return {
@@ -48,12 +72,20 @@ def root():
     }
 
 
+# ---------------------------------------------------------
+# HEALTH CHECK
+# ---------------------------------------------------------
+
 @app.get("/health")
 def health_check():
     return {
         "status": "healthy"
     }
 
+
+# ---------------------------------------------------------
+# AUTHENTICATION TEST
+# ---------------------------------------------------------
 
 @app.get("/me")
 def get_me(current_user=Depends(get_current_user)):
