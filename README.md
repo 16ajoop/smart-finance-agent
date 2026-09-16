@@ -102,24 +102,15 @@ The dashboard provides an overview of:
 
 ## 🏗️ Architecture
 
-```text
-                          User
-                            │
-                            ▼
-                      React + Vite Frontend
-                            │
-                            ▼
-                      FastAPI Backend
-                            │
-                            ├── Clerk Authentication
-                            │
-                            ├── PostgreSQL Database
-                            │
-                            └── Groq AI
-                             │
-                             ▼
-                    Financial Analysis
-```
+### Overall System Architecture
+The overall architecture shows how the frontend, backend, authentication, database, and AI services work together.
+
+📄 [View Overall Architecture](docs/overall_architecture.pdf)
+
+### AI Agent Architecture
+The AI agent architecture shows how user questions are processed through financial tools, financial data, Python calculations, and the Groq LLM to generate insights and responses.
+
+📄 [View AI Agent Architecture](docs/AI_Agent_architecture.pdf)
 
 ## ⚙️ Local Setup
 
