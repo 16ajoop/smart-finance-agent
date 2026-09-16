@@ -179,9 +179,10 @@ function App() {
               </div>
 
             </header>
-
             <div className="page-content">
-              {renderPage()}
+              <div className="page-container">
+                {renderPage()}
+              </div>
             </div>
 
           </main>
