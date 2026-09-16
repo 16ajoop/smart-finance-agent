@@ -36,7 +36,7 @@ Examples:
 - How much disposable income do I have?
 - Am I overspending on food?
 
-The AI assistant analyzes the user's expenses, budgets, and financial profile to provide relevant financial insights.
+The AI assistant analyzes the user's expenses, budgets, and financial profile to provide personalized spending insights and financial information.
 
 ## 🧾 Expense Management
 
