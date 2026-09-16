@@ -2,6 +2,145 @@ import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
 
+
+// clear formatting
+function formatBoldText(text) {
+  const parts = text.split("**");
+
+  return parts.map((part, index) => {
+    if (index % 2 === 1) {
+      return (
+        <strong key={index}>
+          {part}
+        </strong>
+      );
+    }
+
+    return part;
+  });
+}
+
+
+function formatAIResponse(text) {
+  if (!text) return null;
+
+  return text.split("\n").map((line, index) => {
+    const trimmed = line.trim();
+
+    // Empty line
+    if (!trimmed) {
+      return (
+        <div
+          key={index}
+          className="ai-response-spacer"
+        />
+      );
+    }
+
+    // ### Heading
+    if (trimmed.startsWith("### ")) {
+      return (
+        <h4
+          key={index}
+          className="ai-response-heading"
+        >
+          {formatBoldText(
+            trimmed.replace(/^###\s*/, "")
+          )}
+        </h4>
+      );
+    }
+
+    // ## Heading
+    if (trimmed.startsWith("## ")) {
+      return (
+        <h3
+          key={index}
+          className="ai-response-heading"
+        >
+          {formatBoldText(
+            trimmed.replace(/^##\s*/, "")
+          )}
+        </h3>
+      );
+    }
+
+    // # Heading
+    if (trimmed.startsWith("# ")) {
+      return (
+        <h3
+          key={index}
+          className="ai-response-heading"
+        >
+          {formatBoldText(
+            trimmed.replace(/^#\s*/, "")
+          )}
+        </h3>
+      );
+    }
+
+    // Bullet point
+    if (trimmed.startsWith("- ")) {
+      const content = trimmed.replace(
+        /^-\s*/,
+        ""
+      );
+
+      return (
+        <div
+          key={index}
+          className="ai-response-bullet"
+        >
+          <span className="ai-response-bullet-dot">
+            •
+          </span>
+
+          <span>
+            {formatBoldText(content)}
+          </span>
+        </div>
+      );
+    }
+
+    // Numbered point
+    if (/^\d+\.\s/.test(trimmed)) {
+      const content = trimmed.replace(
+        /^\d+\.\s*/,
+        ""
+      );
+
+      const number = trimmed.match(
+        /^\d+/
+      )?.[0];
+
+      return (
+        <div
+          key={index}
+          className="ai-response-numbered"
+        >
+          <span className="ai-response-number">
+            {number}.
+          </span>
+
+          <span>
+            {formatBoldText(content)}
+          </span>
+        </div>
+      );
+    }
+
+    // Normal paragraph
+    return (
+      <p
+        key={index}
+        className="ai-response-paragraph"
+      >
+        {formatBoldText(trimmed)}
+      </p>
+    );
+  });
+}
+
 function FinancialAgent() {
   const { getToken } = useAuth();
 
@@ -209,19 +348,9 @@ function FinancialAgent() {
             </div>
 
             <div className="response-content">
-
-              {answer
-                .split("\n")
-                .map(
-                  (line, index) => (
-
-                    <p key={index}>
-                      {line}
-                    </p>
-
-                  )
-                )}
-
+              
+                {formatAIResponse(answer)}
+              
             </div>
 
           </div>

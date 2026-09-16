@@ -45,7 +45,13 @@ function Dashboard() {
   if (loading) {
     return (
       <div className="dashboard-page">
-        <h2>Loading your financial dashboard...</h2>
+        <div className="dashboard-loading">
+          <div className="dashboard-loading-icon">✦</div>
+          <h2>Loading your dashboard</h2>
+          <p>
+            Preparing your financial overview...
+          </p>
+        </div>
       </div>
     );
   }
@@ -53,12 +59,22 @@ function Dashboard() {
   if (message) {
     return (
       <div className="dashboard-page">
-        <h2>Dashboard</h2>
-        <p>{message}</p>
+        <div className="dashboard-error">
+          <div className="dashboard-error-icon">
+            !
+          </div>
 
-        <button onClick={loadDashboard}>
-          Retry
-        </button>
+          <h2>Unable to load dashboard</h2>
+
+          <p>{message}</p>
+
+          <button
+            className="dashboard-refresh-button"
+            onClick={loadDashboard}
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }
@@ -67,184 +83,442 @@ function Dashboard() {
     return null;
   }
 
+  const formatCurrency = (value) =>
+    `₹${Number(value || 0).toLocaleString("en-IN")}`;
+
   return (
     <div className="dashboard-page">
 
+      {/* =========================================
+          DASHBOARD HEADER
+          ========================================= */}
+
       <div className="dashboard-header">
-        <div>
-          <h1>Financial Dashboard</h1>
+
+        <div className="dashboard-header-content">
+
+          <span className="dashboard-eyebrow">
+            FINANCIAL OVERVIEW
+          </span>
+
+          <h1>
+            Financial Dashboard
+          </h1>
+
           <p>
             Your financial overview at a glance.
           </p>
+
         </div>
 
-        <button onClick={loadDashboard}>
+        <button
+          className="dashboard-refresh-button"
+          onClick={loadDashboard}
+        >
+          <span>↻</span>
           Refresh
         </button>
+
       </div>
 
 
-      {/* SUMMARY CARDS */}
+      {/* =========================================
+          SUMMARY CARDS
+          ========================================= */}
 
       <div className="dashboard-cards">
 
-        <div className="dashboard-card">
-          <span>Monthly Income</span>
+        <div className="dashboard-card income-card">
+
+          <div className="dashboard-card-top">
+            <div className="dashboard-card-icon">
+              💰
+            </div>
+
+            <span className="dashboard-card-label">
+              MONTHLY INCOME
+            </span>
+          </div>
+
           <h2>
-            ₹{dashboard.monthly_income.toLocaleString("en-IN")}
+            {formatCurrency(
+              dashboard.monthly_income
+            )}
           </h2>
+
+          <p>
+            Your monthly take-home income
+          </p>
+
         </div>
 
 
-        <div className="dashboard-card">
-          <span>Total Expenses</span>
+        <div className="dashboard-card expense-card">
+
+          <div className="dashboard-card-top">
+            <div className="dashboard-card-icon">
+              ↗
+            </div>
+
+            <span className="dashboard-card-label">
+              TOTAL EXPENSES
+            </span>
+          </div>
+
           <h2>
-            ₹{dashboard.total_expenses.toLocaleString("en-IN")}
+            {formatCurrency(
+              dashboard.total_expenses
+            )}
           </h2>
+
+          <p>
+            Total spending this month
+          </p>
+
         </div>
 
 
-        <div className="dashboard-card">
-          <span>Remaining Balance</span>
+        <div className="dashboard-card balance-card">
+
+          <div className="dashboard-card-top">
+            <div className="dashboard-card-icon">
+              ◇
+            </div>
+
+            <span className="dashboard-card-label">
+              REMAINING BALANCE
+            </span>
+          </div>
+
           <h2>
-            ₹{dashboard.remaining_balance.toLocaleString("en-IN")}
+            {formatCurrency(
+              dashboard.remaining_balance
+            )}
           </h2>
+
+          <p>
+            Available after expenses
+          </p>
+
         </div>
 
 
-        <div className="dashboard-card">
-          <span>Savings Rate</span>
+        <div className="dashboard-card savings-card">
+
+          <div className="dashboard-card-top">
+            <div className="dashboard-card-icon">
+              ✦
+            </div>
+
+            <span className="dashboard-card-label">
+              SAVINGS RATE
+            </span>
+          </div>
+
           <h2>
             {dashboard.savings_rate}%
           </h2>
+
+          <p>
+            Current savings percentage
+          </p>
+
         </div>
 
       </div>
 
 
-      {/* CATEGORY SPENDING */}
+      {/* =========================================
+          ANALYTICS GRID
+          ========================================= */}
 
-      <div className="dashboard-section">
+      <div className="dashboard-analytics-grid">
 
-        <h2>Spending by Category</h2>
+        {/* SPENDING BY CATEGORY */}
 
-        <div className="category-list">
+        <div className="dashboard-section category-section">
 
-          {Object.entries(
-            dashboard.category_spending
-          ).map(([category, amount]) => (
+          <div className="dashboard-section-header">
 
-            <div
-              className="category-row"
-              key={category}
-            >
+            <div>
+              <span className="dashboard-section-eyebrow">
+                ANALYTICS
+              </span>
 
-              <span>{category}</span>
+              <h2>
+                Spending by Category
+              </h2>
 
-              <strong>
-                ₹{amount.toLocaleString("en-IN")}
-              </strong>
-
+              <p>
+                Where your money is going
+              </p>
             </div>
 
-          ))}
+            <div className="section-header-icon">
+              ◈
+            </div>
 
-        </div>
-
-      </div>
-
-
-      {/* BUDGET STATUS */}
-
-      <div className="dashboard-section">
-
-        <h2>Budget vs Actual</h2>
-
-        <div className="budget-list">
-
-          {dashboard.budget_status.map(
-            (item) => (
-
-              <div
-                className="budget-item"
-                key={item.category}
-              >
-
-                <div className="budget-header">
-
-                  <span>
-                    {item.category}
-                  </span>
-
-                  <span>
-                    ₹
-                    {item.spent.toLocaleString(
-                      "en-IN"
-                    )}
-                    {" / "}
-                    ₹
-                    {item.budget.toLocaleString(
-                      "en-IN"
-                    )}
-                  </span>
-
-                </div>
+          </div>
 
 
-                <div className="budget-bar">
+          <div className="category-list">
 
-                  <div
-                    className="budget-progress"
-                    style={{
-                      width: `${Math.min(
-                        item.percentage_used,
-                        100
-                      )}%`,
-                    }}
-                  />
+            {Object.entries(
+              dashboard.category_spending || {}
+            ).length === 0 ? (
 
-                </div>
-
-
-                <small>
-
-                  {item.percentage_used.toFixed(1)}
-                  % used
-
-                  {" • "}
-
-                  ₹
-                  {Math.abs(
-                    item.remaining
-                  ).toLocaleString(
-                    "en-IN"
-                  )}
-
-                  {item.remaining >= 0
-                    ? " remaining"
-                    : " over budget"}
-
-                </small>
-
+              <div className="dashboard-empty">
+                <span>◈</span>
+                <p>No spending data yet.</p>
               </div>
 
-            )
-          )}
+            ) : (
+
+              Object.entries(
+                dashboard.category_spending || {}
+              ).map(([category, amount]) => {
+
+                const total =
+                  dashboard.total_expenses || 0;
+
+                const percentage =
+                  total > 0
+                    ? Math.min(
+                        (amount / total) * 100,
+                        100
+                      )
+                    : 0;
+
+                return (
+                  <div
+                    className="category-row"
+                    key={category}
+                  >
+
+                    <div className="category-row-top">
+
+                      <div className="category-name">
+                        <span className="category-dot"></span>
+                        <span>{category}</span>
+                      </div>
+
+                      <strong>
+                        {formatCurrency(amount)}
+                      </strong>
+
+                    </div>
+
+                    <div className="category-progress">
+                      <div
+                        className="category-progress-fill"
+                        style={{
+                          width: `${percentage}%`,
+                        }}
+                      />
+                    </div>
+
+                  </div>
+                );
+              })
+            )}
+
+          </div>
+
+        </div>
+
+
+        {/* BUDGET STATUS */}
+
+        <div className="dashboard-section budget-section">
+
+          <div className="dashboard-section-header">
+
+            <div>
+              <span className="dashboard-section-eyebrow">
+                PLANNING
+              </span>
+
+              <h2>
+                Budget vs Actual
+              </h2>
+
+              <p>
+                Track your monthly allocations
+              </p>
+            </div>
+
+            <div className="section-header-icon">
+              ◎
+            </div>
+
+          </div>
+
+
+          <div className="budget-list">
+
+            {dashboard.budget_status?.length === 0 ? (
+
+              <div className="dashboard-empty">
+                <span>◎</span>
+                <p>No budget data yet.</p>
+              </div>
+
+            ) : (
+
+              dashboard.budget_status.map(
+                (item) => {
+
+                  const percentage = Math.max(
+                    0,
+                    item.percentage_used || 0
+                  );
+
+                  const isOverBudget =
+                    item.remaining < 0;
+
+                  return (
+                    <div
+                      className="budget-item"
+                      key={item.category}
+                    >
+
+                      <div className="budget-header">
+
+                        <div>
+                          <strong>
+                            {item.category}
+                          </strong>
+
+                          <span>
+                            {formatCurrency(
+                              item.spent
+                            )}{" "}
+                            /{" "}
+                            {formatCurrency(
+                              item.budget
+                            )}
+                          </span>
+                        </div>
+
+                        <span
+                          className={
+                            isOverBudget
+                              ? "budget-percentage over"
+                              : "budget-percentage"
+                          }
+                        >
+                          {percentage.toFixed(0)}%
+                        </span>
+
+                      </div>
+
+
+                      <div className="budget-bar">
+
+                        <div
+                          className={
+                            isOverBudget
+                              ? "budget-progress over"
+                              : "budget-progress"
+                          }
+                          style={{
+                            width: `${Math.min(
+                              percentage,
+                              100
+                            )}%`,
+                          }}
+                        />
+
+                      </div>
+
+
+                      <div className="budget-footer">
+
+                        <span>
+                          {percentage.toFixed(1)}%
+                          {" "}used
+                        </span>
+
+                        <span
+                          className={
+                            isOverBudget
+                              ? "budget-remaining over"
+                              : "budget-remaining"
+                          }
+                        >
+                          {formatCurrency(
+                            Math.abs(
+                              item.remaining
+                            )
+                          )}
+
+                          {isOverBudget
+                            ? " over budget"
+                            : " remaining"}
+                        </span>
+
+                      </div>
+
+                    </div>
+                  );
+                }
+              )
+            )}
+
+          </div>
 
         </div>
 
       </div>
 
 
-      {/* RECENT EXPENSES */}
+      {/* =========================================
+          RECENT EXPENSES
+          ========================================= */}
 
-      <div className="dashboard-section">
+      <div className="dashboard-section recent-expenses-section">
 
-        <h2>Recent Expenses</h2>
+        <div className="dashboard-section-header">
+
+          <div>
+            <span className="dashboard-section-eyebrow">
+              ACTIVITY
+            </span>
+
+            <h2>
+              Recent Expenses
+            </h2>
+
+            <p>
+              Your latest recorded transactions
+            </p>
+          </div>
+
+          <div className="section-header-icon">
+            ↗
+          </div>
+
+        </div>
+
 
         {dashboard.recent_expenses.length === 0 ? (
 
-          <p>No expenses recorded yet.</p>
+          <div className="dashboard-empty recent-empty">
+
+            <div className="empty-icon">
+              🧾
+            </div>
+
+            <h3>
+              No expenses recorded yet
+            </h3>
+
+            <p>
+              Add your first expense to start
+              tracking your spending.
+            </p>
+
+          </div>
 
         ) : (
 
@@ -268,16 +542,22 @@ function Dashboard() {
                   key={expense.id}
                 >
 
-                  <span>
+                  <span className="expense-description">
+                    <span className="expense-row-icon">
+                      ₹
+                    </span>
+
                     {expense.description ||
                       "Expense"}
                   </span>
 
-                  <span>
+
+                  <span className="expense-category">
                     {expense.category}
                   </span>
 
-                  <span>
+
+                  <span className="expense-date">
                     {new Date(
                       expense.expense_date
                     ).toLocaleDateString(
@@ -285,10 +565,10 @@ function Dashboard() {
                     )}
                   </span>
 
-                  <strong>
-                    ₹
-                    {expense.amount.toLocaleString(
-                      "en-IN"
+
+                  <strong className="expense-amount">
+                    {formatCurrency(
+                      expense.amount
                     )}
                   </strong>
 

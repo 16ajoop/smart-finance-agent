@@ -80,11 +80,15 @@ function App() {
           <aside className="sidebar">
 
             <div className="sidebar-logo">
-              <div className="logo-icon">✦</div>
+              <img
+                src="/smart-finance-logo.png"
+                alt="Smart Finance"
+                className="sidebar-logo-mark"
+              />
 
-              <div>
+              <div className="sidebar-brand-text">
                 <h2>Smart Finance</h2>
-                <span>AI Financial Platform</span>
+                <p>AI Financial Platform</p>
               </div>
             </div>
 
